@@ -83,7 +83,6 @@ export default function RentalPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // ✅ FIXED: Typo STORAGE_KEY sudah diperbaiki (sebelumnya STORAGE_Key)
     const savedItems = localStorage.getItem(STORAGE_KEY);
     let currentItems = [];
 
@@ -128,12 +127,24 @@ export default function RentalPage() {
 
   const availableProducts = selectedType === "iphone" ? iPhones : accecories;
 
-  const total = useMemo(() => {
-    return items.reduce((totalPrice, item) => {
+  // LOGIC PEMERIKSAAN HARGA DISKUSIKAN VIA WA
+  const displayTotal = useMemo(() => {
+    if (items.length === 0) return "Diskusikan via WhatsApp";
+
+    let sum = 0;
+    for (const item of items) {
       const product = findProduct(item.type, item.slug);
       const priceInfo = getPriceInfo(product, item.duration);
-      return totalPrice + priceInfo.amount;
-    }, 0);
+
+      // Jika ada satu produk saja yang berstatus Diskusikan via WhatsApp, total langsung menjadi Diskusikan via WhatsApp
+      if (priceInfo.label === "Diskusikan via WhatsApp") {
+        return "Diskusikan via WhatsApp";
+      }
+
+      sum += priceInfo.amount;
+    }
+
+    return sum > 0 ? formatPrice(sum) : "Diskusikan via WhatsApp";
   }, [items]);
 
   function handleAddProduct() {
@@ -261,6 +272,11 @@ export default function RentalPage() {
         : "Ambil di Tempat";
 
     const message = `Halo iRent.This, saya ingin melakukan penyewaan.
+Nama:
+${form.name}
+
+No. WhatsApp:
+${form.whatsapp}
 
 Detail Penyewaan:
 ${rentalItems}
@@ -274,12 +290,6 @@ ${form.time}
 Metode Pengambilan:
 ${pickupInfo}
 
-Nama:
-${form.name}
-
-No. WhatsApp:
-${form.whatsapp}
-
 Aplikasi yang ingin di-install:
 ${form.apps || "-"}
 
@@ -287,7 +297,7 @@ Catatan:
 ${form.note || "-"}
 
 Total Estimasi:
-${total > 0 ? formatPrice(total) : "Diskusikan via WhatsApp"}
+${displayTotal}
 
 Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
 
@@ -658,7 +668,7 @@ Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
                   <p className="text-[#101010]/60 text-sm">Estimasi total</p>
 
                   <p className="text-[#101010] text-3xl font-bold mt-1">
-                    {total > 0 ? formatPrice(total) : "Diskusikan via WhatsApp"}
+                    {displayTotal}
                   </p>
 
                   <p className="text-[#101010]/50 text-sm mt-2">
