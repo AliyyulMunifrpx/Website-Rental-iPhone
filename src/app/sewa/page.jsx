@@ -66,25 +66,10 @@ function getDurationLabel(item) {
 }
 
 export default function RentalPage() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => {
+    if (typeof window === "undefined") return [];
 
-  const [selectedType, setSelectedType] = useState("iphone");
-  const [selectedProduct, setSelectedProduct] = useState("");
-
-  const [form, setForm] = useState({
-    name: "",
-    whatsapp: "",
-    date: "",
-    time: "",
-    pickupMethod: "ambil",
-    codLocation: "",
-    apps: "",
-    note: "",
-  });
-
-  useEffect(() => {
     const savedItems = localStorage.getItem(STORAGE_KEY);
-
     let currentItems = [];
 
     if (savedItems) {
@@ -96,13 +81,11 @@ export default function RentalPage() {
     }
 
     const params = new URLSearchParams(window.location.search);
-
     const queryType = params.get("type");
     const queryUnit = params.get("unit");
 
     if (queryUnit) {
       const type = queryType || "iphone";
-
       const product = findProduct(type, queryUnit);
 
       if (product) {
@@ -121,14 +104,13 @@ export default function RentalPage() {
       }
     }
 
-    setItems(currentItems);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentItems));
-  }, []);
+    return currentItems;
+  });
+
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
-
   const availableProducts = selectedType === "iphone" ? iPhones : accecories;
 
   const total = useMemo(() => {
