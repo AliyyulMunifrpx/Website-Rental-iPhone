@@ -1,20 +1,14 @@
-"use client";
+
 
 import Image from "next/image.js";
 import Link from "next/link.js";
-import { motion } from "framer-motion";
+
 
 export default function CtaSection() {
   return (
     <div className="mt-32 w-full px-4 lg:px-16 lg:h-[70dvh] flex items-end rounded-2xl">
-      <motion.div
-        initial={{ y: 60 }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{
-          duration: 0.7,
-          ease: [0.22, 1, 0.36, 1],
-        }}
+      <div
+
         className="w-full h-[50dvh] bg-[#101010] grid grid-cols-1 lg:grid-cols-2 grid-rows-1 rounded-3xl relative"
       >
         <div className="col-start-1 flex flex-col justify-center px-4 lg:pl-16 items-center">
@@ -44,7 +38,7 @@ export default function CtaSection() {
             />
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -66,9 +66,24 @@ function getDurationLabel(item) {
 }
 
 export default function RentalPage() {
-  const [items, setItems] = useState(() => {
-    if (typeof window === "undefined") return [];
+  const [selectedType, setSelectedType] = useState("iphone");
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    whatsapp: "",
+    date: "",
+    time: "",
+    pickupMethod: "ambil",
+    codLocation: "",
+    apps: "",
+    note: "",
+  });
+  const [items, setItems] = useState([]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // ✅ FIXED: Typo STORAGE_KEY sudah diperbaiki (sebelumnya STORAGE_Key)
     const savedItems = localStorage.getItem(STORAGE_KEY);
     let currentItems = [];
 
@@ -104,13 +119,13 @@ export default function RentalPage() {
       }
     }
 
-    return currentItems;
-  });
-
+    setItems(currentItems);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
+
   const availableProducts = selectedType === "iphone" ? iPhones : accecories;
 
   const total = useMemo(() => {
@@ -145,7 +160,6 @@ export default function RentalPage() {
     };
 
     setItems((current) => [...current, newItem]);
-
     setSelectedProduct("");
   }
 
@@ -315,7 +329,7 @@ Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
               {/* ITEM YANG SUDAH DIPILIH */}
               <div className="flex flex-col gap-4">
                 {items.length === 0 ? (
-                  <div className="rounded-2xl p-8 text-center">
+                  <div className="rounded-2xl border border-[#101010]/10 p-8 text-center">
                     <p className="text-[#101010]/60">
                       Belum ada unit yang dipilih.
                     </p>

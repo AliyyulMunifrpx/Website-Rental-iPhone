@@ -1,8 +1,8 @@
-"use client";
+
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+
 import { accecories } from "../../data/accecories.js";
 import { iPhones } from "../../data/iphones.js";
 
@@ -26,28 +26,21 @@ function PhoneCard({
   const slug = slugify(name);
 
   return (
-    <motion.div
-      initial={{ y: 60 }}
-      whileInView={{ y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.1,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+    <div
+
       className="w-full h-auto "
     >
       <Link
         href={`${basePath}/${slug}`}
         className="w-full h-full lg:p-4 flex flex-col gap-4"
       >
-      <p className="bg-green-600 px-2 rounded-full w-fit">{badge}</p>
+        <p className="bg-green-600 px-2 rounded-full w-fit">{badge}</p>
         <Image
           alt={name}
           src={url}
           width={400}
           height={400}
-          className="w-full aspect-square hover:scale-105 transition ease-out"
+          className="w-full aspect-square lg:hover:scale-105 transition ease-out"
         />
 
         <h4 className="text-[#101010] w-full text-center font-bold text-md lg:text-2xl">
@@ -76,7 +69,7 @@ function PhoneCard({
           </span>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
 export default function RecommendationSection() {

@@ -1,7 +1,6 @@
-"use client";
 
 import { Star } from "lucide-react";
-import { motion } from "framer-motion";
+
 
 function Rating({ rating = 5 }) {
   return (
@@ -40,15 +39,8 @@ function Rating({ rating = 5 }) {
 
 function TestimonialCard({ name, role, text, rating, index }) {
   return (
-    <motion.div
-      initial={{ y: 60 }}
-      whileInView={{ y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.6,
-        delay: index * 0.12,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+    <div
+     
       className="flex flex-col gap-8 h-full"
     >
       <p className="text-md lg:text-xl font-light leading-relaxed text-[#101010]">
@@ -57,13 +49,15 @@ function TestimonialCard({ name, role, text, rating, index }) {
 
       <div className="flex justify-between mt-auto">
         <div>
-          <p className="font-semibold text-[#101010] text-lg lg:text-2xl">{name}</p>
+          <p className="font-semibold text-[#101010] text-lg lg:text-2xl">
+            {name}
+          </p>
           <p className="text-md text-[#101010]/80">{role}</p>
         </div>
 
         <Rating rating={rating} />
       </div>
-    </motion.div>
+    </div>
   );
 }
 
