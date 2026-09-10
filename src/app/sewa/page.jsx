@@ -310,33 +310,27 @@ export default function RentalPage() {
       return;
     }
 
-  const tableHeader = "No | Nama Produk          | Durasi | Harga";
-const tableDivider = "---|----------------------|--------|---------------------";
+    const rentalItems = items
+      .map((item) => {
+        const product = findProduct(item.type, item.slug);
+        if (!product) return null;
 
-const tableRows = items
-  .map((item, index) => {
-    const product = findProduct(item.type, item.slug);
-    if (!product) return null;
+        const priceInfo = getPriceInfo(product, item.duration);
 
-    const priceInfo = getPriceInfo(product, item.duration);
-    const no = (index + 1).toString().padEnd(2, " ");
-    const name = product.name.padEnd(20, " ");
-    const duration = getDurationLabel(item).padEnd(6, " ");
-    const price = priceInfo.label;
+        return `- ${product.name} — ${getDurationLabel(
+          item
+        )} — ${priceInfo.label}`;
+      })
+      .filter(Boolean)
+      .join("\n");
 
-    return `${no} | ${name} | ${duration} | ${price}`;
-  })
-  .filter(Boolean)
-  .join("\n");
-
-const rentalItems = `\`\`\`\n${tableHeader}\n${tableDivider}\n${tableRows}\n\`\`\``;
     const pickupInfo =
       form.pickupMethod === "cod"
         ? `COD\nLokasi COD: ${form.codLocation}`
         : "Ambil di Tempat";
 
     const message = `Halo iRent.This, saya ingin melakukan penyewaan.
-
+    
 Nama:
 ${form.name}
 
