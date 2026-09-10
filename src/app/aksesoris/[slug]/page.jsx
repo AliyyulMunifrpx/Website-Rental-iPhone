@@ -1,0 +1,94 @@
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import CtaSection from "../../../components/home/cta-section.jsx";
+import { accecories } from "../../../data/accecories.js";
+import MainLayout from "../../../components/layouts/main-layout.jsx";
+
+function formatPrice(price) {
+  return `Rp${price.toLocaleString("id-ID")}`;
+}
+
+function slugify(name) {
+  return name.toLowerCase().trim().replace(/\s+/g, "-");
+}
+
+function getAccessory(slug) {
+  return accecories.find((item) => slugify(item.name) === slug);
+}
+
+export function generateStaticParams() {
+  return accecories.map((item) => ({
+    slug: slugify(item.name),
+  }));
+}
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+
+  const accessory = getAccessory(slug);
+
+  if (!accessory) {
+    return {
+      title: "Aksesoris tidak ditemukan",
+    };
+  }
+
+  return {
+    title: `${accessory.name} | iRent.This`,
+    description: `Sewa ${accessory.name} di iRent.This dengan harga ${formatPrice(
+      accessory.price,
+    )} per 24 jam.`,
+  };
+}
+
+export default async function AccessoryDetailPage({ params }) {
+  const { slug } = await params;
+
+  const accessory = getAccessory(slug);
+
+  if (!accessory) {
+    notFound();
+  }
+
+  return (
+    <MainLayout>
+      <section className="w-full flex flex-col lg:flex-row items-center gap-8 lg:gap-16 px-4 lg:px-16 mt-8">
+        <div className="w-full lg:w-1/2 aspect-square relative">
+          <Image
+            alt={accessory.name}
+            src={accessory.url}
+            fill
+            className="object-contain"
+          />
+        </div>
+
+        <div className="w-full lg:w-1/2 flex flex-col items-start gap-4">
+          <h1 className="text-[#101010] text-2xl lg:text-4xl font-bold">
+            {accessory.name}
+          </h1>
+
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex justify-between items-center w-full py-2 border-b border-[#101010]/10">
+              <p className="text-[#101010]/80 text-md">24 jam</p>
+
+              <p className="text-[#101010] font-bold text-md lg:text-xl">
+                {formatPrice(accessory.price)}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex mt-8 w-full lg:w-auto">
+            <Link
+              href={`/sewa?type=accessory&unit=${slug}`}
+              className="w-full lg:w-auto text-center px-6 py-2 text-white bg-orange-600 hover:bg-orange-600/90 rounded-full"
+            >
+              Sewa Sekarang
+            </Link>
+          </div>
+        </div>
+      </section>
+      <CtaSection></CtaSection>
+    </MainLayout>
+  );
+}
