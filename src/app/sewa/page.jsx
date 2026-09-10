@@ -8,8 +8,54 @@ import { iPhones } from "../../data/iphones.js";
 import { accecories } from "../../data/accecories.js";
 
 const STORAGE_KEY = "irent-rental-items";
-
 const WHATSAPP_NUMBER = "6282329475745";
+
+const termsData = [
+  {
+    id: 1,
+    title: "1. Mengisi Form",
+    description: "Mengisi form yang kami kirim.",
+  },
+  {
+    id: 2,
+    title: "2. Ketentuan iCloud",
+    description: "iCloud dari kami dan dilarang log out icloud.",
+  },
+  {
+    id: 3,
+    title: "3. List Aplikasi",
+    description:
+      "List aplikasi di form booking yang dibutuhkan sebelum pengambilan karena tidak bisa download aplikasi saat iphone sudah diambil.",
+  },
+  {
+    id: 4,
+    title: "4. Penghapusan Data",
+    description:
+      "Sebelum pengembalian harap menghapus data yang ada atau belum sempat pindah bisa kami bantu.",
+  },
+  {
+    id: 5,
+    title: "5. Jaminan",
+    description:
+      'Minimal 2 id "YANG KAMI TAHAN & MASIH BERLAKU" wajib ktp dan ditambah dengan sim/stnk/kk/npwp/ktm/kia/kartu pelajar/kartu santri/kis/bpjs.',
+  },
+  {
+    id: 6,
+    title: "6. Hitungan Sewa",
+    description: "Hitungan sewa 6jam, 12jam dan 24jam dihitung dari jam ambil.",
+  },
+  {
+    id: 7,
+    title: "7. Dokumentasi",
+    description: "Bersedia di foto saat pengambilan iPhone.",
+  },
+  {
+    id: 8,
+    title: "8. Tanggung Jawab Unit",
+    description:
+      "Setelah pengambilan iphone sepenuhnya tanggung jawab penyewa, jika ada kerusakan saat pengembalian tanggung jawab penyewa.",
+  },
+];
 
 function formatPrice(price) {
   return `Rp${price.toLocaleString("id-ID")}`;
@@ -47,7 +93,7 @@ function getPriceInfo(product, duration) {
 
   if (product.prices) {
     const option = product.prices.find(
-      (item) => item.duration === Number(duration),
+      (item) => item.duration === Number(duration)
     );
     if (option) {
       return { amount: option.price, label: formatPrice(option.price) };
@@ -80,6 +126,11 @@ export default function RentalPage() {
   });
   const [items, setItems] = useState([]);
 
+  // State Syarat & Ketentuan
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const [isAgreed, setIsAgreed] = useState(false);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -104,7 +155,7 @@ export default function RentalPage() {
 
       if (product) {
         const exists = currentItems.some(
-          (item) => item.type === type && item.slug === queryUnit,
+          (item) => item.type === type && item.slug === queryUnit
         );
 
         if (!exists) {
@@ -127,7 +178,6 @@ export default function RentalPage() {
 
   const availableProducts = selectedType === "iphone" ? iPhones : accecories;
 
-  // LOGIC PEMERIKSAAN HARGA DISKUSIKAN VIA WA
   const displayTotal = useMemo(() => {
     if (items.length === 0) return "Diskusikan via WhatsApp";
 
@@ -136,7 +186,6 @@ export default function RentalPage() {
       const product = findProduct(item.type, item.slug);
       const priceInfo = getPriceInfo(product, item.duration);
 
-      // Jika ada satu produk saja yang berstatus Diskusikan via WhatsApp, total langsung menjadi Diskusikan via WhatsApp
       if (priceInfo.label === "Diskusikan via WhatsApp") {
         return "Diskusikan via WhatsApp";
       }
@@ -151,16 +200,13 @@ export default function RentalPage() {
     if (!selectedProduct) return;
 
     const product = findProduct(selectedType, selectedProduct);
-
     if (!product) return;
 
     const exists = items.some(
-      (item) => item.type === selectedType && item.slug === selectedProduct,
+      (item) => item.type === selectedType && item.slug === selectedProduct
     );
 
-    if (exists) {
-      return;
-    }
+    if (exists) return;
 
     const presets = getPresetDurations(product);
 
@@ -196,7 +242,7 @@ export default function RentalPage() {
           }
         }
         return item;
-      }),
+      })
     );
   }
 
@@ -220,17 +266,25 @@ export default function RentalPage() {
           }
         }
         return item;
-      }),
+      })
     );
   }
 
   function handleFormChange(e) {
     const { name, value } = e.target;
-
     setForm((current) => ({
       ...current,
       [name]: value,
     }));
+  }
+
+  // Cek apakah scroll sudah sampai bawah di modal
+  function handleTermsScroll(e) {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // Buffer 10px untuk kompensasi pembulatan pixel
+    if (scrollHeight - scrollTop <= clientHeight + 10) {
+      setHasScrolledToBottom(true);
+    }
   }
 
   function handleSubmit(e) {
@@ -251,27 +305,38 @@ export default function RentalPage() {
       return;
     }
 
-    const rentalItems = items
-      .map((item) => {
-        const product = findProduct(item.type, item.slug);
+    if (!isAgreed) {
+      alert("Anda harus menyetujui Syarat & Ketentuan terlebih dahulu.");
+      return;
+    }
 
-        if (!product) return null;
+  const tableHeader = "No | Nama Produk          | Durasi | Harga";
+const tableDivider = "---|----------------------|--------|---------------------";
 
-        const priceInfo = getPriceInfo(product, item.duration);
+const tableRows = items
+  .map((item, index) => {
+    const product = findProduct(item.type, item.slug);
+    if (!product) return null;
 
-        return `- ${product.name} — ${getDurationLabel(
-          item,
-        )} — ${priceInfo.label}`;
-      })
-      .filter(Boolean)
-      .join("\n");
+    const priceInfo = getPriceInfo(product, item.duration);
+    const no = (index + 1).toString().padEnd(2, " ");
+    const name = product.name.padEnd(20, " ");
+    const duration = getDurationLabel(item).padEnd(6, " ");
+    const price = priceInfo.label;
 
+    return `${no} | ${name} | ${duration} | ${price}`;
+  })
+  .filter(Boolean)
+  .join("\n");
+
+const rentalItems = `\`\`\`\n${tableHeader}\n${tableDivider}\n${tableRows}\n\`\`\``;
     const pickupInfo =
       form.pickupMethod === "cod"
         ? `COD\nLokasi COD: ${form.codLocation}`
         : "Ambil di Tempat";
 
     const message = `Halo iRent.This, saya ingin melakukan penyewaan.
+
 Nama:
 ${form.name}
 
@@ -302,7 +367,7 @@ ${displayTotal}
 Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      message,
+      message
     )}`;
 
     window.open(whatsappUrl, "_blank");
@@ -662,6 +727,43 @@ Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
                 </div>
               </div>
 
+              {/* CHECKBOX SYARAT & KETENTUAN */}
+              <div className="flex flex-col gap-2 pt-4">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="termsAgreement"
+                    checked={isAgreed}
+                    onChange={(e) => setIsAgreed(e.target.checked)}
+                    disabled={!hasScrolledToBottom}
+                    className="mt-1 w-5 h-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  <label
+                    htmlFor="termsAgreement"
+                    className={`text-sm select-none ${
+                      !hasScrolledToBottom
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-[#101010] cursor-pointer"
+                    }`}
+                  >
+                    Saya telah membaca dan menyetujui{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsTermsOpen(true)}
+                      className="text-orange-600 underline font-semibold hover:text-orange-700 cursor-pointer inline"
+                    >
+                      Syarat dan Ketentuan
+                    </button>
+                  </label>
+                </div>
+
+                {!hasScrolledToBottom && (
+                  <p className="text-xs text-orange-600 italic ml-8">
+                    * Klik dan baca Syarat & Ketentuan hingga akhir untuk dapat mengaktifkan centang.
+                  </p>
+                )}
+              </div>
+
               {/* TOTAL + SUBMIT */}
               <div className="border-t border-[#101010]/10 pt-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
@@ -678,7 +780,8 @@ Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
 
                 <button
                   type="submit"
-                  className="px-8 py-4 rounded-full bg-orange-600 hover:bg-orange-600/90 text-white cursor-pointer"
+                  disabled={!isAgreed}
+                  className="px-8 py-4 rounded-full bg-orange-600 hover:bg-orange-600/90 disabled:bg-gray-300 disabled:cursor-not-allowed text-white cursor-pointer font-medium transition-colors"
                 >
                   Kirim Form
                 </button>
@@ -687,6 +790,68 @@ Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
           </form>
         </div>
       </section>
+
+      {/* MODAL SYARAT & KETENTUAN */}
+      {isTermsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full flex flex-col max-h-[85vh] shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-[#101010]">
+                Syarat & Ketentuan
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsTermsOpen(false)}
+                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-lg transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body dengan listener Scroll */}
+            <div
+              onScroll={handleTermsScroll}
+              className="p-6 overflow-y-auto flex flex-col gap-6 flex-1 text-left"
+            >
+              {termsData.map((term) => (
+                <div key={term.id} className="space-y-1">
+                  <h3 className="text-lg font-bold text-[#101010]">
+                    {term.title}
+                  </h3>
+                  <p className="text-sm text-[#101010]/80 leading-relaxed">
+                    {term.description}
+                  </p>
+                </div>
+              ))}
+
+              {hasScrolledToBottom && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl text-center">
+                  <p className="text-xs text-green-700 font-medium">
+                    ✓ Anda telah membaca seluruh syarat dan ketentuan. Sekarang Anda dapat menyetujuinya.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50">
+              <p className="text-xs text-gray-500 text-center sm:text-left">
+                {!hasScrolledToBottom
+                  ? "Gulir sampai paling bawah untuk dapat menutup & menyetujui."
+                  : "Silakan tutup modal dan beri centang pada form."}
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsTermsOpen(false)}
+                className="w-full sm:w-auto px-6 py-2.5 bg-[#101010] hover:bg-[#101010]/90 text-white rounded-full font-medium transition-colors cursor-pointer text-sm"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }
