@@ -26,7 +26,7 @@ export default function HeroSection() {
         </h1>
 
         <p className=" w-full text-sm lg:text-lg text-[#101010] text-center col-end-4">
-          Sewa iPhone mulai dari Rp 50ribu. <br className="lg:hidden" />
+          Sewa iPhone mulai dari Rp 50 ribu. <br className="lg:hidden" />
           Proses cepat, syarat gampang.
         </p>
         

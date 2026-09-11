@@ -7,10 +7,10 @@ import TermsSection from "../components/home/terms-and-conditions-section.jsx";
 import TestimonialSection from "../components/home/testimonials-section.jsx";
 import FAQSection from "../components/home/faq-section.jsx";
 import CtaSection from "../components/home/cta-section.jsx";
+import { store } from "../data/store.js";
 export const metadata = {
-  title: "Sewa iPhone di Magelang | iRent.This",
-  description:
-    "Sewa iPhone di Magelang mulai dari Rp50 ribu/hari. Pilih iPhone dan aksesoris untuk ngonten, bisnis, liburan, atau kebutuhan lainnya.",
+  title: `Sewa iPhone di ${store.city} | ${store.name} `,
+  description: `Sewa iPhone di  ${store.city} mulai dari Rp50 ribu. Pilih iPhone dan aksesoris untuk ngonten, bisnis, liburan, atau kebutuhan lainnya.`,
 };
 export default function Home() {
   return (

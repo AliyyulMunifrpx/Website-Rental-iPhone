@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import CtaSection from "../../../components/home/cta-section.jsx";
 import { accecories } from "../../../data/accecories.js";
 import MainLayout from "../../../components/layouts/main-layout.jsx";
+import { store } from "../../../data/store.js";
 
 function formatPrice(price) {
   return `Rp${price.toLocaleString("id-ID")}`;
@@ -35,10 +36,10 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${accessory.name} | iRent.This`,
-    description: `Sewa ${accessory.name} di iRent.This dengan harga ${formatPrice(
+    title: `Sewa ${accessory.name} di ${store.city}`,
+    description: `Sewa ${accessory.name} di ${store.name} mulai dengan harga ${formatPrice(
       accessory.price,
-    )} per 24 jam.`,
+    )}.`,
   };
 }
 

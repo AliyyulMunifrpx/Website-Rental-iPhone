@@ -6,9 +6,9 @@ import MainLayout from "../../components/layouts/main-layout.jsx";
 
 import { iPhones } from "../../data/iphones.js";
 import { accecories } from "../../data/accecories.js";
+import { store } from "../../data/store.js";
 
 const STORAGE_KEY = "irent-rental-items";
-const WHATSAPP_NUMBER = "6282329475745";
 
 const termsData = [
   {
@@ -329,7 +329,7 @@ export default function RentalPage() {
         ? `COD\nLokasi COD: ${form.codLocation}`
         : "Ambil di Tempat";
 
-    const message = `Halo iRent.This, saya ingin melakukan penyewaan.
+    const message = `Halo ${store.name}, saya ingin melakukan penyewaan.
     
 Nama:
 ${form.name}
@@ -360,7 +360,7 @@ ${displayTotal}
 
 Mohon konfirmasi ketersediaan unit dan detail penyewaannya.`;
 
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    const whatsappUrl = `https://wa.me/${store.whatsapp}?text=${encodeURIComponent(
       message
     )}`;
 

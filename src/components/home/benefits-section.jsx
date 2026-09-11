@@ -1,5 +1,6 @@
 import { ShieldCheck, Zap, Wallet, ArrowRight, Truck } from "lucide-react";
 import Link from "next/link.js";
+import { store } from "../../data/store.js";
 
 function BenefitCard({ icon: Icon, title, description }) {
   return (
@@ -49,7 +50,7 @@ export default function BenefitSection() {
   return (
     <section className=" w-full flex flex-col justify-start mt-32 items-center  px-4 lg:px-16 gap-16">
       <h2 className="text-[#101010] text-2xl lg:text-4xl text-center lg:text-start w-full">
-        Kenapa Harus <span className="font-bold">iRent.This?</span>{" "}
+        Kenapa Harus <span className="font-bold">{store.name}?</span>{" "}
       </h2>
       <div className="w-full h-full grid grid-cols-2 lg:grid-cols-4 gap-8">
         {benefits.map((item) => (

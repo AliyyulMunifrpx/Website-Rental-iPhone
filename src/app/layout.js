@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { store } from "../data/store.js";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,11 +14,10 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: {
-    default: "iRent.This — Sewa iPhone di Magelang",
-    template: "%s | iRent.This",
+    default: `${store.name} — Sewa iPhone di ${store.city}`,
+    template: `%s | ${store.name}`,
   },
-  description:
-    "Sewa iPhone di Magelang mulai dari Rp50 ribu/hari. Pilih iPhone dan aksesoris untuk ngonten, bisnis, liburan, atau kebutuhan lainnya.",
+  description: `Sewa iPhone di ${store.name} mulai dari Rp50 ribu. Pilih iPhone dan aksesoris untuk ngonten, bisnis, liburan, atau kebutuhan lainnya.`,
 };
 
 export default function RootLayout({ children }) {

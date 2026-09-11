@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link.js";
+import { store } from "../data/store.js";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,8 +29,7 @@ export default function Navbar() {
         className="absolute left-4 md:left-8 lg:left-16 top-4 font-bold text-[#101010] text-2xl"
         onClick={() => setIsOpen(false)}
       >
-        iRent.This
-      </Link>
+{store.name}      </Link>
 
       {/* Desktop menu — posisi & layout persis seperti semula, cuma disembunyikan di bawah lg */}
       <div className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 gap-16 justify-center">

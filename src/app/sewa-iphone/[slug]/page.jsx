@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { iPhones } from "../../../data/iphones.js";
 import MainLayout from "../../../components/layouts/main-layout.jsx";
 import CtaSection from "../../../components/home/cta-section.jsx";
+import { store } from "../../../data/store.js";
 
 function formatPrice(price) {
   return `Rp${price.toLocaleString("id-ID")}`;
@@ -23,7 +24,6 @@ export function generateStaticParams() {
     slug: slugify(item.name),
   }));
 }
-
 export async function generateMetadata({ params }) {
   const { slug } = await params;
 
@@ -36,10 +36,10 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${phone.name} | iRent.This`,
-    description: `Sewa ${phone.name} di Magelang mulai dari ${formatPrice(
+    title: `  Sewa ${phone.name} `,
+    description: `Sewa ${phone.name} di ${store.city}, cocok untuk kebutuhan ngonten, event, liburan atau yang lain, mulai dari ${formatPrice(
       phone.prices[0].price,
-    )}/hari. Proses cepat, syarat gampang.`,
+    )}. Proses cepat, syarat gampang.`,
   };
 }
 
