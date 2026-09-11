@@ -46,7 +46,7 @@ export const metadata = {
     card: "summary_large_image",
     title: `Sewa iPhone di ${store.city} | ${store.name}`,
     description: `Sewa iPhone di ${store.city} untuk kebutuhan konten, bisnis, liburan, dan lainnya.`,
-    images: ["/og.webp"],
+    images: ["/assets/og.webp"],
   },
 };
 
