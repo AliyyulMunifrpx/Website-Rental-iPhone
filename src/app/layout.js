@@ -34,7 +34,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/og.webp",
+        url: "/assets/og.webp",
         width: 1200,
         height: 630,
         alt: `${store.name} - Sewa iPhone di ${store.city}`,
